@@ -10,7 +10,7 @@ pytest
 seaborn
 sklearn
 yapf
-tensorflow-macos==2.8.0
+
 protobuf==3.20.0
 #wandb==0.12.17di
 
@@ -24,3 +24,10 @@ mlflow
 prefect<2
 prefect[viz]
 psycopg2-binary
+
+# tensorflow management
+tensorflow-macos==2.8.0
+# comment this for Intel/Other chipset
+tensorflow==2.5.0
+# comment this for M1 chipset
+tensorflow==2.3.0
