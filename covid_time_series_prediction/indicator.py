@@ -12,6 +12,14 @@ class Indicator:
         self.data = Indicator().get_country_data()
         print('self.data', self.data)
 
+    def get_data()
+    """
+    get the data read local csv...
+    and do what?
+    self.df_1
+    self.df_2
+    """
+
     def get_country_data(self, country_name='France') -> pd.DataFrame:
         country_index, country_indicator = country_output(country=country_name)
         return country_index, country_indicator
