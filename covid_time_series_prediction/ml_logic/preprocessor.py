@@ -21,6 +21,7 @@ def train_test_set(country, split_train=0.8, split_val=0):
 
     X, y = scaler(country)
 
+
     train = int((len(X)*split_train))
     val = int(len(X)*split_val)
 
