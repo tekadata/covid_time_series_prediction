@@ -17,9 +17,11 @@ def scaler(country):
 
     return X_scaled, y
 
+
 def train_test_set(country, split_train=0.8, split_val=0):
 
     X, y = scaler(country)
+
 
 
     train = int((len(X)*split_train))
