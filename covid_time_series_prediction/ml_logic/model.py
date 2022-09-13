@@ -89,4 +89,3 @@ def model_ml(country):
     grid_result = MultiOutputRegressor(gsc).fit(X_train, y_train)
     
     return grid_result.best_params_
-    

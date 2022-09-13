@@ -40,5 +40,3 @@ def train_test_set(country, split_train=0.8, split_val=0):
     y_test = y[val:]
     
     return X_train, y_train, X_val, y_val, X_test, y_test
-
-
