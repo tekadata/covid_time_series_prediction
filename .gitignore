@@ -6,5 +6,3 @@
 data/raw_data/*.csv
 **/__pycache__/
 .env
-data/
-raw_data/
