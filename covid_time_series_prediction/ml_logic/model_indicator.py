@@ -4,7 +4,7 @@ from sklearn.svm import SVR
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
 
-def create_df(country):
+def create_df_indicator(country):
     
     path = "../covid_time_series_prediction/data/data_raw"
     
@@ -53,9 +53,9 @@ def create_df(country):
                        
     return  X, y 
 
-def train_test_set_ml(country, days):
+def train_test_set_ml_indicator(country, days):
     
-    X, y = create_df(country)
+    X, y = create_df_indicator(country)
     
     train = int(((len(X)-days)))
 
@@ -73,9 +73,9 @@ def train_test_set_ml(country, days):
     
     return X_train_scaled, y_train, X_test_scaled, y_test
 
-def model_ml(country, days):
+def model_ml_indicator(country, days):
     
-    X_train, y_train, X_test, y_test = train_test_set_ml(country, days)
+    X_train, y_train, X_test, y_test = train_test_set_ml_indicator(country, days)
     
     model = SVR()
         

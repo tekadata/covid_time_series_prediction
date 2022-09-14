@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.svm import SVR
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
+from sklearn.metrics import mean_absolute_percentage_error
 
 def create_df_index(country):
     
@@ -74,17 +75,19 @@ def model_ml_index(country, days):
     
     X_train, y_train, X_test, y_test = train_test_set_ml_index(country, days)
     
-    model = SVR()
-        
-    param={'kernel' : ('linear', 'poly', 'rbf', 'sigmoid'),'C' : [1,5,10],'degree' : [2,3,5],
-        'coef0' : [0.1,0.5,1],'gamma' : ('auto','scale')}
+    model =SVR(C=5, coef0=10, degree=8, epsilon=0.05, gamma='auto', kernel='poly')
+    model.fit(X_train,y_train)
+    y_pred=model.predict(X_test)
+    score=mean_absolute_percentage_error(y_test, y_pred)
+    
+    #param={'kernel' : ('linear', 'poly', 'rbf', 'sigmoid'),'C' : [1,5,10],'degree' : [3,8],'coef0' : [0.01,10,0.5],'gamma' : ('auto','scale')},
 
-    grid_search = GridSearchCV(model, param_grid = param, scoring= 'neg_mean_absolute_percentage_error', 
-                        cv = 2, n_jobs = -1, verbose = 2, refit=True)
+    #grid_search = GridSearchCV(model, param_grid = param, 
+    #                  cv = 2, n_jobs = -1, verbose = 2)
 
-    grid_search.fit(X_train,y_train)
-    best_model = grid_search.best_estimator_
-    best_params = grid_search.best_params_
-    best_score = grid_search.best_score_
+    #grid_search.fit(X_train,y_train)
+    #best_model = grid_search.best_estimator_
+    #best_params = grid_search.best_params_
+    #best_score = grid_search.best_score_
 
-    return best_model, best_params, best_score
+    return model, score
