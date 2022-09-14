@@ -49,11 +49,8 @@ def arch_rnn_model_1(X_train, n_pred):
     rnn_model = Sequential()
     # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
     # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer 
     # 2nd layer
-    # rnn_model.add(LSTM(units=30, activation='relu', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 3rd layer
     rnn_model.add(LSTM(units=10, activation='tanh'))  ## , input_shape=(?,?))) without a Normalizer layer    
     # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
     rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
@@ -73,7 +70,6 @@ def arch_rnn_model_2(X_train, n_pred):
     # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
     # Input len(train) (input_shape=(?,?))
     rnn_model.add(LSTM(units=30, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
     # 2nd layer
     rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
     # 3rd layer
@@ -85,11 +81,9 @@ def arch_rnn_model_2(X_train, n_pred):
     return rnn_model
 
 def arch_rnn_model_3(X_train, n_pred):
-    """ function that create a RNN model architeture with 3 LSTM layers:
-    - LSTM
-    - Dense
-    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
-    > LSTM
+    """ function that create a RNN model architeture with 3 LSTM layers with a last RELU layer:
+    - BEST MAPE: 6.688204288482666 with model #3, nb obs: 60, lr: 0.001, n_pred=10, c='FRA'
+    - BEST MAPE: 18.718429565429688 with model #3, nb obs: 60, lr: 0.001, n_pred=10, c='FRA'    
     """
     # print('input_shape', X_train.shape)
     rnn_model = Sequential()
@@ -107,99 +101,17 @@ def arch_rnn_model_3(X_train, n_pred):
     
     return rnn_model
 
-### Model Architecturing
 def arch_rnn_model_4(X_train, n_pred):
-    """ function that create a RNN model architeture with 2 layers:
-    - BEST MAPE: 6.837233066558838 with model #1, nb obs: 65, lr: 0.001, n_pred = 3
-    - BEST MAPE: 9.387785911560059 with model #1, nb obs: 60, lr: 0.001, n_pred = 10
-    """
-    # print('input_shape', X_train.shape)
-    rnn_model = Sequential()
-    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
-    # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    
-    # 2nd layer
-    # rnn_model.add(LSTM(units=30, activation='relu', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 3rd layer
-    rnn_model.add(LSTM(units=10, activation='tanh'))  ## , input_shape=(?,?))) without a Normalizer layer    
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
-    rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(n_pred, activation = 'linear'))
-    
-    return rnn_model
-
-def arch_rnn_model_5(X_train, n_pred):
-    """ function that create a RNN model architeture with 3 layers:
-    - LSTM
-    - Dense
-    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
-    > LSTM
-    """
-    # print('input_shape', X_train.shape)
-    rnn_model = Sequential()
-    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
-    # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=40, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    
-    # 2nd layer
-    rnn_model.add(LSTM(units=30, activation='tanh', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 3rd layer
-    rnn_model.add(LSTM(units=20, activation='tanh'))  ## , input_shape=(?,?))) without a Normalizer layer    
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers   
-    rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(n_pred, activation = 'linear'))
-    
-    return rnn_model
-
-def arch_rnn_model_6(X_train, n_pred):
-    """ function that create a RNN model architeture with layers:
+    """ function that create a RNN model architeture with layers with a last RELU layer:
     - BEST MAPE: 51.2643356323242 with model #3, nb obs: 65, lr: 0.001, n_pred=7
-    """
-    # print('input_shape', X_train.shape)
-    rnn_model = Sequential()
-    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
-    # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=40, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    # 2nd layer
-    rnn_model.add(LSTM(units=40, activation='tanh', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 3rd layer
-    rnn_model.add(LSTM(units=30, activation='tanh'))  ## , input_shape=(?,?))) without a Normalizer layer    
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
-    rnn_model.add(Dense(n_pred, activation = 'linear'))
-    
-    return rnn_model
-
-def arch_rnn_model_7(X_train, n_pred):
-    """ function that create a RNN model architeture with layers:
-    - LSTM
-    - Dense
-    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
-    > LSTM
-    """
-    # print('input_shape', X_train.shape)
-    rnn_model = Sequential()
-    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
-    # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=30, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 2nd layer
-    rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    # 3rd layer
-    rnn_model.add(LSTM(units=10, activation='relu'))  ## , input_shape=(?,?))) without a Normalizer layer    
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
-    rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(n_pred, activation = 'linear'))
-    
-    return rnn_model
-
-def arch_rnn_model_8(X_train, n_pred):
-    """ function that create a RNN model architeture with layers:
-    - BEST MAPE: 51.2643356323242 with model #3, nb obs: 65, lr: 0.001, n_pred=7
+    - BEST MAPE: 6.688204288482666 with model #3, nb obs: 60, lr: 0.001, n_pred=10, c='FRA'
+    - BEST MAPE: 15.1573486328125 with model #3, nb obs: 60, lr: 0.001, n_pred=10, c='DEU'
+    - BEST MAPE: 15.767879486083984 with model #8, nb obs: 60, lr: 0.001, n_pred=10, c='USA'
+    - BEST MAPE: 15.767879486083984 with model #8, nb obs: 60, lr: 0.001, n_pred=10, c='USA'
+    - BEST MAPE: 16.32421875 with model #8, nb obs: 60, lr: 0.001, n_pred=10, c='UK'
+    - BEST MAPE: 17.89015769958496 with model #8, nb obs: 60, lr: 0.001, n_pred=10, c='USA'
+    - BEST MAPE: 25.942426681518555 with model #8, nb obs: 60, lr: 0.001, n_pred=10, c='India'
+    - BEST MAPE: 9.994515419006348 with model #3, nb obs: 60, lr: 0.001, n_pred=10, c='Brazil'
     """
     # print('input_shape', X_train.shape)
     rnn_model = Sequential()
@@ -224,7 +136,7 @@ def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_tr
     #### Split the dataset into training, validation and test datas
     X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val)  
     best_n_obs = [] ; best_lr = [] ; best_model = [] ; best_MAPE = MAPE = []
-    models = range(1, 7)
+    models = range(1, 5)
     # print('models', models)    
     for n_o in n_obs:
         for model in models:
@@ -247,14 +159,14 @@ def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_tr
                     rnn_model = arch_rnn_model_3(X_train=X_train_seq, n_pred=n_pred)
                 if model == 4:
                     rnn_model = arch_rnn_model_4(X_train=X_train_seq, n_pred=n_pred)
-                elif model == 5:
-                    rnn_model = arch_rnn_model_5(X_train=X_train_seq, n_pred=n_pred)
-                elif model == 6:
-                    rnn_model = arch_rnn_model_6(X_train=X_train_seq, n_pred=n_pred)                
-                elif model == 7:
-                    rnn_model = arch_rnn_model_7(X_train=X_train_seq, n_pred=n_pred)
-                elif model == 8:
-                    rnn_model = arch_rnn_model_8(X_train=X_train_seq, n_pred=n_pred)                      
+                #elif model == 5:
+                #    rnn_model = arch_rnn_model_5(X_train=X_train_seq, n_pred=n_pred)
+                #elif model == 6:
+                #    rnn_model = arch_rnn_model_6(X_train=X_train_seq, n_pred=n_pred)                
+                #elif model == 7:
+                #   rnn_model = arch_rnn_model_7(X_train=X_train_seq, n_pred=n_pred)
+                #elif model == 8:
+                #    rnn_model = arch_rnn_model_8(X_train=X_train_seq, n_pred=n_pred)                      
 
                 # 2. Compiling with 'rmsprop' rather than 'adam' (recommended)
                 optimizer = RMSprop(
@@ -269,7 +181,7 @@ def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_tr
                                  metrics='mape')  # Recommended optimizer for RNNs
 
                 # 3. Training
-                history = train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=200, patience=7)
+                history = train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=400, patience=7)
                 MAPE = list(history.history['mape'])
                 # print('MAPE', MAPE)                
                 if len(MAPE) > 0:
@@ -297,13 +209,20 @@ def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_tr
                                 # print(best_lr, best_MAPE, best_model, best_n_obs)
                                 [print(f"with model #{best_model[i]}, nb obs: {best_n_obs[i]}, lr: {best_lr[i]}") for i, v in enumerate(best_MAPE) if v == min_best_MAPE]
      
-                        
-                # 4. Evaluating
-                # The prediction (one per sequence/city)
-                # y_pred = rnn_model.predict(X_test) 
-                # print(y_pred.shape)
-                # Distribution of the predictions
-                # pd.DataFrame(y_pred).mean().sort_values(ascending=False)
+                                if min(MAPE) <= min_best_MAPE:
+                                    # 4. Evaluating
+                                    # The prediction (one per sequence/city)
+                                    y_pred = rnn_model.predict(X_test) 
+                                    print(y_pred.shape)
+                                    # Distribution of the predictions
+                                    pd.DataFrame(y_pred).mean().sort_values(ascending=False)
+                            else:
+                                # 4. Evaluating
+                                # The prediction (one per sequence/city)
+                                y_pred = rnn_model.predict(X_test) 
+                                print(y_pred.shape)
+                                # Distribution of the predictions
+                                pd.DataFrame(y_pred).mean().sort_values(ascending=False)                                
 
 
                 # set_params() function
@@ -380,8 +299,65 @@ def model_run_2(data, country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, 
 
             # 4. Evaluating
             ## The prediction (one per sequence/city)
-            #y_pred = rnn_model.predict(X_test) 
-            #print(y_pred.shape)
+            y_pred = rnn_model.predict(X_test) 
+            print(y_pred.shape)
             ## Distribution of the predictions
-            #pd.DataFrame(y_pred).mean().sort_values(ascending=False)
-            
+            return pd.DataFrame(y_pred).mean().sort_values(ascending=False)
+        
+def generate_country_code(country):
+    code=df_cases_raw[df_cases_raw['country_name']==country]['country_code']
+    code=code.iloc[0]
+    return code
+
+
+def get_RNN_model_API(country_name='France') -> pd.DataFrame:
+    """ function that return the y dataframe predicted for a given country
+    """
+    if len(country_name) > 3:
+
+        n_seq=200 ; n_obs=60 ; n_feat=20
+        n_seq_test = n_seq // 10 ; n_seq_val = n_seq // 5 ; 
+        n_pred=10 ; split_train=0.7 ; split_val=0.9 ; learning_rate=0.001
+        
+        #### Split the dataset into training, validation and test datas
+        X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val)  
+
+        ### Train Splitting with sequenced training, validation and test datas
+        #### for train data:
+        X_train_seq, y_train_seq = get_X_y_2(X_train, y_train, X_len=n_obs, y_len=n_pred, n_sequences=n_seq)
+        #### for val data:
+        X_val_seq, y_val_seq = get_X_y_2(X_val, y_val, X_len=n_obs, y_len=n_pred, n_sequences=n_seq_val)
+        #### for test data:
+        X_test_seq, y_test_seq = get_X_y_2(X_test, y_test, X_len=n_obs, y_len=n_pred, n_sequences=n_seq_test)              
+
+        # 1. The Architecture
+        rnn_model = Sequential()
+        # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
+        # Input len(train) (input_shape=(?,?))
+        rnn_model.add(LSTM(units=30, activation='tanh', return_sequences=True, 
+                           input_shape=(X_train_seq.shape[-2],X_train_seq.shape[-1]))) 
+        rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+        # 2nd layer
+        rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True)) 
+        # 3rd layer
+        rnn_model.add(LSTM(units=10, activation='relu'))  
+        # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+        rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+        rnn_model.add(Dense(n_pred, activation = 'linear'))          
+
+        # 2. Compiling with 'rmsprop' rather than 'adam' (recommended)
+        optimizer = RMSprop(learning_rate=learning_rate,
+                            rho=0.9, momentum=0.0, epsilon=1e-07, centered=False)
+        rnn_model.compile(loss='mse',
+                      optimizer= optimizer, # optimizer='rmsprop'    <- adapt learning rate
+                         metrics='mape')  # Recommended optimizer for RNNs
+
+        # 3. Training
+        train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=400, patience=14)
+        
+        # 4. Evaluating
+        # The prediction (one per sequence/city)
+        y_pred = rnn_model.predict(X_test_seq) 
+        # Distribution of the predictions
+        return pd.DataFrame(y_pred).mean()
+                    
