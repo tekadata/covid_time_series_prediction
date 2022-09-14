@@ -321,7 +321,7 @@ def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
         n_pred=10 ; split_train=0.7 ; split_val=0.9 ; learning_rate=0.001
         
         #### Split the dataset into training, validation and test datas
-        X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val)  
+        X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val, switch_to_index=True)  
 
         ### Train Splitting with sequenced training, validation and test datas
         #### for train data:
@@ -364,3 +364,4 @@ def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
             return pd.DataFrame(y_pred).mean(), y_test
         return pd.DataFrame(y_pred).mean()
                     
+        # y = country_indicator['total_deaths']

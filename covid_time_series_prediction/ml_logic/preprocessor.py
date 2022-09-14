@@ -28,9 +28,34 @@ def scale_country(country):
     return X_scaled, y
 
 
-def train_test_set(country, split_train=0.8, split_val=0):
+def scale_country_index(country):
     
-    X, y = scale_country(country)
+    print("Hello new function here for index (of Sumedha)...")
+    
+    path = "../data/out_csv"
+    
+    csv_path = os.path.join(path, f"index_{country}.csv")
+    
+    country_indicator = pd.read_csv(csv_path)
+    
+    X = country_indicator.drop(columns = ['date','new_cases', 'new_deaths', 'total_deaths'])
+
+    y = country_indicator['total_deaths']
+
+    scaler = MinMaxScaler()
+
+    X_scaled = scaler.fit_transform(X)
+
+
+    return X_scaled, y
+
+
+def train_test_set(country, split_train=0.8, split_val=0, switch_to_index=False):
+    
+    if switch_to_index == True:
+        X, y = scale_country_index(country)
+    else:
+        X, y = scale_country(country)
     
     train = int((len(X)*split_train))
     val = int(len(X)*split_val)
