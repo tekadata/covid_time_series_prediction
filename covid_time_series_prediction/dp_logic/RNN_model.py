@@ -311,7 +311,7 @@ def generate_country_code(country):
     return code
 
 
-def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
+def get_RNN_model_API(country_name='France', return_test=False, switch_to_index=False) -> pd.DataFrame:
     """ function that return the y dataframe predicted for a given country
     """
     if len(country_name) > 3:
@@ -320,8 +320,8 @@ def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
         n_seq_test = n_seq // 10 ; n_seq_val = n_seq // 5 ; 
         n_pred=10 ; split_train=0.7 ; split_val=0.9 ; learning_rate=0.001
         
-        #### Split the dataset into training, validation and test datas
-        X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val, switch_to_index=True)  
+        #### Split the dataset into training, validation and test datas NOW! NOW!
+        X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val, switch_to_index=switch_to_index)  
 
         ### Train Splitting with sequenced training, validation and test datas
         #### for train data:
@@ -336,14 +336,14 @@ def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
         # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
         # Input len(train) (input_shape=(?,?))
         rnn_model.add(LSTM(units=30, activation='tanh', return_sequences=True, 
-                           input_shape=(X_train_seq.shape[-2],X_train_seq.shape[-1]))) 
-        rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+                           input_shape=(X_train_seq.shape[-2],X_train_seq.shape[-1])))    
         # 2nd layer
         rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True)) 
         # 3rd layer
-        rnn_model.add(LSTM(units=10, activation='relu'))  
+        rnn_model.add(LSTM(units=10, activation='tanh'))  
         # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
         rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+        rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit 
         rnn_model.add(Dense(n_pred, activation = 'linear'))          
 
         # 2. Compiling with 'rmsprop' rather than 'adam' (recommended)
