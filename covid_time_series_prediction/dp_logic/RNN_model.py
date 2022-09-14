@@ -1,0 +1,271 @@
+# Import dependencies
+import numpy as np
+import pandas as pd
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+import matplotlib.pyplot as plt
+from tensorflow.keras import layers
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.layers.experimental.preprocessing import Normalization
+from tensorflow.keras.layers import Dense, SimpleRNN, LSTM, GRU, Flatten
+from tensorflow.keras.models import Sequential
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.optimizers import RMSprop 
+from covid_time_series_prediction.ml_logic.preprocessor import train_test_set
+from covid_time_series_prediction.dp_logic.sequencing import subsample_sequence, subsample_sequence_2, get_X_y,  get_X_y_2, split_subsample_sequence
+
+## TENSORFLOW & RNN MODEL
+
+### Model Training
+def train_rnn_model(model, X_train, y_train, X_val=np.array(1), y_val=np.array(1), patience=20, epochs=200):
+    """ function that train a RNN model with hyperparameters:
+    - patience by default 2 to early stop
+    - epochs by default 200 to train over several epochs
+    - valisation data by default (X_val, y_val)=(0, 0) in case of auto split
+    """
+    es = EarlyStopping(monitor = 'val_loss',
+                    patience = patience,
+                    verbose = 0,
+                    restore_best_weights = True)
+    # The fit
+    history =  model.fit(X_train,
+            y_train, 
+             # Auto split for validation data
+            # [print(f'validation_data=(X_val, y_val),') if (X_val!=0 or y_val!=0) else print(f'validation_split=0.1,')],
+            validation_data=(X_val, y_val),
+            batch_size = 16, 
+            epochs = epochs,
+            callbacks = [es],
+            verbose = 0)
+    return history
+
+### Model Architecturing
+def arch_rnn_model_1(X_train, n_pred):
+    """ function that create a RNN model architeture with layers:
+    - LSTM
+    - Dense
+    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
+    > LSTM
+    """
+    # print('input_shape', X_train.shape)
+    rnn_model = Sequential()
+    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
+    # Input len(train) (input_shape=(?,?))
+    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    # 2nd layer
+    # rnn_model.add(LSTM(units=30, activation='relu', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # 3rd layer
+    rnn_model.add(LSTM(units=10, activation='relu'))  ## , input_shape=(?,?))) without a Normalizer layer    
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+    rnn_model.add(Dense(n_pred, activation = 'linear'))
+    
+    return rnn_model
+
+def arch_rnn_model_2(X_train, n_pred):
+    """ function that create a RNN model architeture with layers:
+    - LSTM
+    - Dense
+    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
+    > LSTM
+    """
+    # print('input_shape', X_train.shape)
+    rnn_model = Sequential()
+    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
+    # Input len(train) (input_shape=(?,?))
+    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    # 2nd layer
+    rnn_model.add(LSTM(units=30, activation='relu', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # 3rd layer
+    rnn_model.add(LSTM(units=10, activation='relu'))  ## , input_shape=(?,?))) without a Normalizer layer    
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+    rnn_model.add(Dense(n_pred, activation = 'linear'))
+    
+    return rnn_model
+
+def arch_rnn_model_3(X_train, n_pred):
+    """ function that create a RNN model architeture with layers:
+    - LSTM
+    - Dense
+    - 3rd model layers architecture (simple -> complex) (less data -> more data) (print(loss) function check lecture)
+    > LSTM
+    """
+    # print('input_shape', X_train.shape)
+    rnn_model = Sequential()
+    # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
+    # Input len(train) (input_shape=(?,?))
+    rnn_model.add(LSTM(units=20, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    # 2nd layer
+    rnn_model.add(LSTM(units=30, activation='relu', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
+    # 3rd layer
+    rnn_model.add(LSTM(units=20, activation='relu'))  ## , input_shape=(?,?))) without a Normalizer layer    
+    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+    rnn_model.add(Dense(n_pred, activation = 'linear'))
+    
+    return rnn_model
+
+# set_params() function
+def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_train=0.8, split_val=0, learning_rates=[0.001]):
+    n_seq_val = n_seq // 5 # number of sequences in test set ?
+    n_seq_test = n_seq // 10 # number of sequences in test set ?
+    #### Split the dataset into training, validation and test datas
+    X_train, y_train, X_val, y_val, X_test, y_test = train_test_set(country_name, split_train=split_train, split_val=split_val)  
+    best_n_obs = best_lr = best_model = best_MAPE = MAPE = []
+    models = range(1, 3)
+    # print('models', models)    
+    for model in models:
+        for n_o in n_obs:
+            for learning_rate in learning_rates:
+
+                ### Train Splitting with sequenced training, validation and test datas
+                #### for train data:
+                X_train_seq, y_train_seq = get_X_y_2(X_train, y_train, X_len=n_o, y_len=n_pred, n_sequences=n_seq)
+                #### for val data:
+                X_val_seq, y_val_seq = get_X_y_2(X_val, y_val, X_len=n_o, y_len=n_pred, n_sequences=n_seq_val)
+                #### for test data:
+                X_test_seq, y_test_seq = get_X_y_2(X_test, y_test, X_len=n_o, y_len=n_pred, n_sequences=n_seq_test)              
+
+                # 1. The Architecture
+                if model == 1:
+                    rnn_model = arch_rnn_model_1(X_train=X_train_seq, n_pred=n_pred)
+                elif model == 2:
+                    rnn_model = arch_rnn_model_2(X_train=X_train_seq, n_pred=n_pred)
+                elif model == 3:
+                    rnn_model = arch_rnn_model_3(X_train=X_train_seq, n_pred=n_pred)
+
+                # 2. Compiling with 'rmsprop' rather than 'adam' (recommended)
+                optimizer = RMSprop(
+                                learning_rate=learning_rate,
+                                rho=0.9,
+                                momentum=0.0,
+                                epsilon=1e-07,
+                                centered=False
+                            )
+                rnn_model.compile(loss='mse',
+                              optimizer= optimizer, # optimizer='rmsprop'    <- adapt learning rate
+                                 metrics='mape')  # Recommended optimizer for RNNs
+
+                # 3. Training
+                history = train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=200, patience=7)
+                MAPE = list(history.history['mape'])
+                # print('MAPE', MAPE)                
+                if len(MAPE) > 0:
+                    if min(MAPE) > 0: 
+                        best_MAPE.append(min(MAPE))
+                        best_lr.append(learning_rate)
+                        best_model.append(model)
+                        best_n_obs.append(n_o)
+                        print('n_seq\t\t', n_seq, '\nn_seq_val\t', n_seq_val, '\nn_seq_test\t', n_seq_test, '\nn_obs\t\t', n_o, '\nn_feat\t\t', n_feat)
+                        print('X_train.shape\t', X_train.shape, '\t->\ty_train shape\t', y_train.shape, '\nX_val.shape\t', X_val.shape, '\t->\ty_val shape\t', y_val.shape, '\nX_test.shape\t', X_test.shape, '\t->\ty_test shape\t', y_test.shape) 
+                        print('X_train_seq.shape', X_train_seq.shape, 'y_train_seq.shape', y_train_seq.shape) 
+                        print('\nX_val_seq.shape', X_val_seq.shape, 'y_val_seq.shape', y_val_seq.shape) 
+                        print('\nX_test_seq.shape', X_test_seq.shape, 'y_test_seq.shape', y_test_seq.shape)     
+                        print("rnn_model.summary()", rnn_model.summary())
+                        print("MODEL #",model)
+                        print("NB OF OBSERVATIONS TO TRAIN:", n_o)
+                        print("LEARNING RATE:", learning_rate)   
+                        print("MIN MAPE:", min(MAPE))
+                        plt.plot(history.history['mape'],label='MAPE', linewidth=3)
+                        plt.plot(history.history['val_mape'], label='val MAPE')
+                        plt.show();
+                        
+                        if len(best_MAPE) > 0:
+                            min_best_MAPE = min(best_MAPE)
+                            if min_best_MAPE > 0:
+                                print("BEST MAPE:", min_best_MAPE) 
+                                print(best_lr, best_MAPE, best_model, best_n_obs)
+                                [print(f"with model #{best_model[i]}, nb obs: {best_n_obs[i]}, lr: {best_lr[i]}") for i, v in enumerate(best_MAPE) if v == min_best_MAPE]
+     
+                        
+                # 4. Evaluating
+                # The prediction (one per sequence/city)
+                # y_pred = rnn_model.predict(X_test) 
+                # print(y_pred.shape)
+                # Distribution of the predictions
+                # pd.DataFrame(y_pred).mean().sort_values(ascending=False)
+
+
+                # set_params() function
+            
+
+def model_run_2(data, country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_train=0.8, split_val=0, learning_rates=[0.001]):
+    n_seq_val = n_seq // 5 # number of sequences in test set ?
+    n_seq_test = n_seq // 10 # number of sequences in test set ?
+    print('n_seq\t\t', n_seq, '\nn_seq_val\t', n_seq_val, '\nn_seq_test\t', n_seq_test, '\nn_obs\t\t', n_obs, '\nn_feat\t\t', n_feat)
+    for n_o in n_obs:
+        for learning_rate in learning_rates:
+            print("NB OF OBSERVATIONS TO TRAIN:", n_o)
+            print("LEARNING RATE:", learning_rate)
+            ### Train Splitting
+            X = data.drop(columns = ['date','new_cases', 'new_deaths', 'total_deaths']) 
+            y = X['total_deaths']
+            scaler = MinMaxScaler()
+            X_scaled = scaler.fit_transform(X)
+            train = int((len(X_scaled)*split_train))
+            val = int(len(X_scaled)*split_val)
+
+            X_train = X[:train]
+            y_train = y[:train]
+
+            if split_val <= split_train:
+                X_test = X[train:]
+                y_test = y[train:]
+            else:
+                X_val = X[train:val]
+                y_val = y[train:val]
+                X_test = X[val:]
+                y_test = y[val:]
+
+            print('X_train.shape\t', X_train.shape, '\t->\ty_train shape\t', y_train.shape, '\nX_val.shape\t', X_val.shape, '\t->\ty_val shape\t', y_val.shape, '\nX_test.shape\t', X_test.shape, '\t->\ty_test shape\t', y_test.shape)            
+            #### Create sequences (`X`,`y`, `X_len`, `y_len`)
+            #### for train data:
+            X_train, y_train = get_X_y_2(X_train, y_train, X_len=n_o, y_len=n_pred, n_sequences=n_seq)
+            print('n_seq / n_obs / n_feat', n_seq, n_o, n_feat, '\nX_train.shape', X_train.shape, 'y_train.shape', y_train.shape) 
+            #### for val data:
+            X_val, y_val = get_X_y_2(X_val, y_val, X_len=n_o, y_len=n_pred, n_sequences=n_seq_val)
+            print('n_seq_val / n_obs / n_feat', n_seq_val, n_o, n_feat, '\nX_val.shape', X_val.shape, 'y_val.shape', y_val.shape) 
+            #### for test data:
+            X_test, y_test = get_X_y_2(X_test, y_test, X_len=n_o, y_len=n_pred, n_sequences=n_seq_test)
+            print('n_seq_test / n_obs / n_feat', n_seq_test, n_o, n_feat, '\nX_test.shape', X_test.shape, 'y_test.shape', y_test.shape) 
+            # Check data before training
+            print('Check data before training')
+            print('X_train.shape\t', X_train.shape, '\t->\ty_train shape\t', y_train.shape, '\nX_val.shape\t', X_val.shape, '\t->\ty_val shape\t', y_val.shape, '\nX_test.shape\t', X_test.shape, '\t->\ty_test shape\t', y_test.shape)
+            print('type(X_train)\t', type(X_train), '\t->\ttype(y_train)\t', type(y_train), '\ntype(X_val)\t', type(X_val), '\t->\ttype(y_val)\t', type(y_val), '\ntype(X_test)\t', type(X_test), '\t->\ttype(y_test)\t', type(y_test))
+            print('n_pred', n_pred)
+            # dim_one=n_seq, dim_two = int(n_o) ; dim_three = int(n_feat) + int(n_pred) ; n_pred=int(n_pred)
+            # 1. The Architecture
+            rnn_model = arch_rnn_model(X_train=X_train, n_pred=n_pred)
+
+
+            # 2. Compiling with 'rmsprop' rather than 'adam' (recommended)
+            optimizer = RMSprop(
+                            learning_rate=learning_rate,
+                            rho=0.9,
+                            momentum=0.0,
+                            epsilon=1e-07,
+                            centered=False
+                        )
+            rnn_model.compile(loss='mse',
+                          optimizer= optimizer, # optimizer='rmsprop'    <- adapt learning rate
+                             metrics='mape')  # Recommended optimizer for RNNs
+            print("rnn_model.summary()", rnn_model.summary())
+            print("NB OF OBSERVATIONS TO TRAIN:", n_o)
+            print("LEARNING RATE:", learning_rate)
+            # 3. Training
+            history = train_rnn_model(model=rnn_model, X_train=X_train, y_train=y_train, X_val=X_val, y_val=y_val, epochs=200, patience=3)
+            plt.plot(history.history['mape'])
+            plt.plot(history.history['val_mape'])
+            plt.show();
+
+            # 4. Evaluating
+            # The prediction (one per sequence/city)
+            y_pred = rnn_model.predict(X_test) 
+            print(y_pred.shape)
+            # Distribution of the predictions
+            pd.DataFrame(y_pred).mean().sort_values(ascending=False)
+            
