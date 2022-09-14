@@ -304,13 +304,14 @@ def model_run_2(data, country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, 
             ## Distribution of the predictions
             return pd.DataFrame(y_pred).mean().sort_values(ascending=False)
         
+        
 def generate_country_code(country):
     code=df_cases_raw[df_cases_raw['country_name']==country]['country_code']
     code=code.iloc[0]
     return code
 
 
-def get_RNN_model_API(country_name='France') -> pd.DataFrame:
+def get_RNN_model_API(country_name='France', return_test=False) -> pd.DataFrame:
     """ function that return the y dataframe predicted for a given country
     """
     if len(country_name) > 3:
@@ -359,5 +360,7 @@ def get_RNN_model_API(country_name='France') -> pd.DataFrame:
         # The prediction (one per sequence/city)
         y_pred = rnn_model.predict(X_test_seq) 
         # Distribution of the predictions
+        if return_test == True:
+            return pd.DataFrame(y_pred).mean(), y_test
         return pd.DataFrame(y_pred).mean()
                     
