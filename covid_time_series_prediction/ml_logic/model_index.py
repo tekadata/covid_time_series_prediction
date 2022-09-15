@@ -5,6 +5,18 @@ from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import mean_absolute_percentage_error
 
+def call_index(country):
+    
+    path = "../covid_time_series_prediction/data/data_raw_index"
+    
+    csv_path = os.path.join(path, f"data_{country}")
+    
+    country_index = pd.read_csv(csv_path, index_col=False)
+
+    country_index = pd.DataFrame(country_index)
+    
+    return country_index
+
 def create_df_index(country):
     
     path = "../covid_time_series_prediction/data/data_raw_index"
