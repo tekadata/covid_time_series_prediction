@@ -33,7 +33,7 @@ def train_rnn_model(model, X_train, y_train, X_val=np.array(1), y_val=np.array(1
              # Auto split for validation data
             # [print(f'validation_data=(X_val, y_val),') if (X_val!=0 or y_val!=0) else print(f'validation_split=0.1,')],
             validation_data=(X_val, y_val),
-            batch_size = 16, 
+            batch_size = 32, 
             epochs = epochs,
             callbacks = [es],
             verbose = 0)
@@ -117,14 +117,14 @@ def arch_rnn_model_4(X_train, n_pred):
     rnn_model = Sequential()
     # rnn_model.add(normalizer) # Using the Normalization layer to standardize the datapoints during the forward pass
     # Input len(train) (input_shape=(?,?))
-    rnn_model.add(LSTM(units=30, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
-    rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+    rnn_model.add(LSTM(units=30, activation='tanh', input_shape=(X_train.shape[-2],X_train.shape[-1]), return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer   
     # 2nd layer
     rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True))  ## , input_shape=(?,?))) without a Normalizer layer
     # 3rd layer
-    rnn_model.add(LSTM(units=10, activation='relu'))  ## , input_shape=(?,?))) without a Normalizer layer    
-    # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
-    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
+    rnn_model.add(LSTM(units=10, activation='tanh'))  ## , input_shape=(?,?))) without a Normalizer layer       
+    # Dense layer
+    rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers   
+    rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit
     rnn_model.add(Dense(n_pred, activation = 'linear'))
     
     return rnn_model
@@ -208,25 +208,7 @@ def model_run(country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_tr
                                 print("BEST MAPE:", min_best_MAPE) 
                                 # print(best_lr, best_MAPE, best_model, best_n_obs)
                                 [print(f"with model #{best_model[i]}, nb obs: {best_n_obs[i]}, lr: {best_lr[i]}") for i, v in enumerate(best_MAPE) if v == min_best_MAPE]
-     
-                                if min(MAPE) <= min_best_MAPE:
-                                    # 4. Evaluating
-                                    # The prediction (one per sequence/city)
-                                    y_pred = rnn_model.predict(X_test) 
-                                    print(y_pred.shape)
-                                    # Distribution of the predictions
-                                    pd.DataFrame(y_pred).mean().sort_values(ascending=False)
-                            else:
-                                # 4. Evaluating
-                                # The prediction (one per sequence/city)
-                                y_pred = rnn_model.predict(X_test) 
-                                print(y_pred.shape)
-                                # Distribution of the predictions
-                                pd.DataFrame(y_pred).mean().sort_values(ascending=False)                                
 
-
-                # set_params() function
-            
 
 def model_run_2(data, country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, split_train=0.8, split_val=0, learning_rates=[0.001]):
     n_seq_val = n_seq // 5 # number of sequences in test set ?
@@ -296,13 +278,6 @@ def model_run_2(data, country_name, n_seq=200, n_obs=[70], n_feat=20, n_pred=1, 
             plt.plot(history.history['mape'])
             plt.plot(history.history['val_mape'])
             plt.show();
-
-            # 4. Evaluating
-            ## The prediction (one per sequence/city)
-            y_pred = rnn_model.predict(X_test) 
-            print(y_pred.shape)
-            ## Distribution of the predictions
-            return pd.DataFrame(y_pred).mean().sort_values(ascending=False)
         
         
 def generate_country_code(country):
@@ -340,8 +315,8 @@ def get_RNN_model_API(country_name='France', return_test=False, switch_to_index=
         # 2nd layer
         rnn_model.add(LSTM(units=20, activation='tanh', return_sequences=True)) 
         # 3rd layer
-        rnn_model.add(LSTM(units=10, activation='tanh'))  
-        # rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit    
+        rnn_model.add(LSTM(units=10, activation='relu'))  
+        # dense layer
         rnn_model.add(Dense(10, activation = 'relu')) ## add 1 or more 'relu' layers    
         rnn_model.add(layers.Dropout(0.3)) ## if RNN model over-fit 
         rnn_model.add(Dense(n_pred, activation = 'linear'))          
@@ -354,7 +329,7 @@ def get_RNN_model_API(country_name='France', return_test=False, switch_to_index=
                          metrics='mape')  # Recommended optimizer for RNNs
 
         # 3. Training
-        train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=400, patience=14)
+        train_rnn_model(model=rnn_model, X_train=X_train_seq, y_train=y_train_seq, X_val=X_val_seq, y_val=y_val_seq, epochs=200, patience=7)
         
         # 4. Evaluating
         # The prediction (one per sequence/city)
