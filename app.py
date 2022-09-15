@@ -55,12 +55,12 @@ country_list=['Brazil','France', 'India', 'Mexico', 'United Kingdom']
 countries=[]
 
 
-path_begin='/root/code/bktan69/Teki-Teka/covid_time_series_prediction/data/out_csv'
+path_begin='./data/out_csv/index_Brazil.csv'
 
 # csv_name = f'index_{option}.csv'
 # csv_path = os.path.join(path_begin, csv_name)
 
-X_test,y_test,X_train,y_train,df,y= preprocessing(option)
+X_test,y_test,X_train,y_train,df,y = preprocessing(option.capitalize())
 date_prediction=['2022/09/01', '2022/09/02', '2022/09/03', '2022/09/04', '2022/09/05'
 '2022/09/06', '2022/09/07', '2022/09/08', '2022/09/09', '2022/09/10']
 

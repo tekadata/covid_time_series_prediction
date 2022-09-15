@@ -10,6 +10,7 @@ def preprocessing(country):
     # path=f'./../../../data/out_csv/index_{country}.csv'
     ####### find the reltive path
 
+
     past_test = '../data/out_csv/index_{country}.csv'
 
 #covid_time_series_prediction/data/out_csv/index_Brazil.csv
