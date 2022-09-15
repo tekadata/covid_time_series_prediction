@@ -309,6 +309,10 @@ def country_output(country):
     country_index.fillna(0, inplace=True)
     country_index.drop(columns = country, inplace=True)
     
+    # AVERAGE CASES AND DEATHS 7 DAYS FOR INDEX
+    country_index['new_deaths'] = country_index['new_deaths'].rolling(window=7).mean().fillna(0)
+    country_index['new_cases'] = country_index['new_cases'].rolling(window=7).mean().fillna(0)
+    
     # JOIN INDICATOR AND VACCINATION
     country_indicator.reset_index(inplace=True)
     country_indicator[country] = country_indicator[country].apply(lambda x: pd.to_datetime( x, format='%y%b%d', infer_datetime_format=True))
@@ -319,6 +323,11 @@ def country_output(country):
     country_indicator.fillna(method = 'ffill', inplace=True)
     country_indicator.fillna(0, inplace=True)
     country_indicator.drop(columns = country, inplace=True)
+    
+    # AVERAGE CASES AND DEATHS 7 DAYS FRO INDICATOR
+    country_indicator['new_deaths'] = country_indicator['new_deaths'].rolling(window=7).mean().fillna(0)
+    country_indicator['new_cases'] = country_indicator['new_cases'].rolling(window=7).mean().fillna(0)
+    
     
     # START THE SERIES WHIT THE FIRST COVID CASE REPORT IT
     country_index = country_index.loc[country_index['total_cases'] > 0].reset_index(drop=True)
