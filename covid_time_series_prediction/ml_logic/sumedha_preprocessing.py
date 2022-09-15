@@ -4,11 +4,6 @@ import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def preprocessing(country):
-    # countries=[]
-    # path='data/out_csv'
-    # for country in country_list:
-    # path=f'./../../../data/out_csv/index_{country}.csv'
-    ####### find the reltive path
 
 
     past_test = f'data/out_csv/index_{country}.csv'
