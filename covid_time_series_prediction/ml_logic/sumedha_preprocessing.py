@@ -4,16 +4,11 @@ import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def preprocessing(country):
-
-
-    past_test = f'data/out_csv/index_{country}.csv'
-    print('past_test', past_test)
-#covid_time_series_prediction/data/out_csv/index_Brazil.csv
-#covid_time_series_prediction/covid_time_series_prediction/ml_logic
-    # path_begin='/root/code/bktan69/Teki-Teka/covid_time_series_prediction/data/out_csv'
-    # csv_name = f'./index_{country}.csv'
-    # csv_path = os.path.join(path_begin, csv_name)
-    df=pd.read_csv(past_test)
+    
+    path = f'../../covid_time_series_prediction/data/out_csv/index_{country}.csv'
+    
+    df=pd.read_csv(path)
+    
     df=df.set_index('date')
     df['day-1']=df['total_deaths'].shift(periods=1)
     df['day-2']=df['total_deaths'].shift(periods=2)
