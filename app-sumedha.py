@@ -25,13 +25,13 @@ st.markdown( '''
 
 option=st.selectbox('PLEASE SELECT YOUR COUNTRY',
 
-('Brazil', 'France','Mexico','Spain'))
+('Brazil', 'France','Mexico','Spain','Russia'))
 
 
 st.write('YOU SELECTED:', option)
 
 
-country_list=['Brazil','France', 'Mexico','Spain']
+country_list=['Brazil','France', 'Mexico','Spain','Russia']
 path_begin='data/out_csv/index_Brazil.csv'
 X_test,y_test,X_train,y_train,df,y = preprocessing(option.capitalize())
 date_prediction=['2022/09/01', '2022/09/02', '2022/09/03', '2022/09/04', '2022/09/05'
