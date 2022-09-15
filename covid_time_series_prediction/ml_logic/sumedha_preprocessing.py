@@ -10,7 +10,8 @@ def preprocessing(country):
     # path=f'./../../../data/out_csv/index_{country}.csv'
     ####### find the reltive path
 
-    past_test = './data/out_csv/index_Brazil.csv'
+
+    past_test = '../data/out_csv/index_{country}.csv'
 
 #covid_time_series_prediction/data/out_csv/index_Brazil.csv
 #covid_time_series_prediction/covid_time_series_prediction/ml_logic
@@ -41,5 +42,6 @@ def preprocessing(country):
     X_test=X[int(n-15):]
     y_train=y[0:int(n-15)]
     y_test=y[int(n-10):]
+
 
     return X_test,y_test,X_train,y_train,df, y
