@@ -36,7 +36,7 @@ st.markdown(
 
 option=st.selectbox('PLEASE SELECT YOUR COUNTRY',
 
-('Brazil', 'France', 'India', 'Mexico', 'United Kingdom'))
+('Brazil', 'France', 'Mexico'))
 
 
 st.write('YOU SELECTED:', option)
@@ -51,20 +51,20 @@ st.write('YOU SELECTED:', option)
 
 # prediction_window = 1st to 10th september 2022
 
-country_list=['Brazil','France', 'India', 'Mexico', 'United Kingdom']
+country_list=['Brazil','France', 'Mexico']
 countries=[]
 
 
-path_begin='./data/out_csv/index_Brazil.csv'
+#path_begin='./data/out_csv/index_Brazil.csv'
 
 # csv_name = f'index_{option}.csv'
 # csv_path = os.path.join(path_begin, csv_name)
 
-X_test,y_test,X_train,y_train,df,y = preprocessing(option.capitalize())
+X_test,y_test,X_train,y_train,df,y = preprocessing(option)
 date_prediction=['2022/09/01', '2022/09/02', '2022/09/03', '2022/09/04', '2022/09/05'
 '2022/09/06', '2022/09/07', '2022/09/08', '2022/09/09', '2022/09/10']
 
-list_pred,X_predict=predict(X_test=X_test, country=option.capitalize(), data=df, y=y)
+list_pred,X_predict=predict(X_test=X_test, country=option, data=df, y=y)
 
 st.line_chart(data=[y_test, list_pred], x=date_prediction)
 
