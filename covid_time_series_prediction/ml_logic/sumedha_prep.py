@@ -1,16 +1,13 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
-from covid_time_series_prediction.ml_logic.sumedha_prep import preprocessing
 
 def preprocessing(country):
-
     #countries=[]
     #path='data/out_csv'
     #for country in country_list:
-    path=f'../data/out_csv/index_{country}.csv'
+    path=f'/home/sumedha/code/covid_time_series_prediction/data/out_csv/index_{country}.csv'
     df=pd.read_csv(path)
-
     df=df.set_index('date')
     df['day-1']=df['total_deaths'].shift(periods=1)
     df['day-2']=df['total_deaths'].shift(periods=2)
@@ -35,8 +32,4 @@ def preprocessing(country):
     y_train=y[0:int(n-15)]
     y_test=y[int(n-10):]
 
-
-
-    return X_test,y_test,X_train,y_train,df, y
-
-
+    return X_test,y_test,X_train,y_train,df,y
