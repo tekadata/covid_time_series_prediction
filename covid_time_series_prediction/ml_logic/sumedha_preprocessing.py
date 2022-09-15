@@ -31,4 +31,5 @@ def preprocessing(country_list):
         X_test=X[int(n-15):]
         y_train=y[0:int(n-15)]
         y_test=y[int(n-10):]
-        return X_train,X_test,y_train,y_test,df
+        countries.append({'country': country,'X_train': X_train,'X_test': X_test,'df':df})
+        return countries
