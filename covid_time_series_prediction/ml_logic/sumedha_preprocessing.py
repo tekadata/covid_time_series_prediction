@@ -1,13 +1,31 @@
 import pandas as pd
 import numpy as np
+import os
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def preprocessing(country):
+<<<<<<< HEAD
     #countries=[]
     #path='data/out_csv'
     #for country in country_list:
     path=f'../data/out_csv/index_{country}.csv'
     df=pd.read_csv(path)
+=======
+    # countries=[]
+    # path='data/out_csv'
+    # for country in country_list:
+    # path=f'./../../../data/out_csv/index_{country}.csv'
+    ####### find the reltive path
+
+    past_test = '../data/out_csv/index_{country}.csv'
+
+#covid_time_series_prediction/data/out_csv/index_Brazil.csv
+#covid_time_series_prediction/covid_time_series_prediction/ml_logic
+    # path_begin='/root/code/bktan69/Teki-Teka/covid_time_series_prediction/data/out_csv'
+    # csv_name = f'./index_{country}.csv'
+    # csv_path = os.path.join(path_begin, csv_name)
+    df=pd.read_csv(past_test)
+>>>>>>> 566283f1dd5f6988078d830c92d1e18b82aa5340
     df=df.set_index('date')
     df['day-1']=df['total_deaths'].shift(periods=1)
     df['day-2']=df['total_deaths'].shift(periods=2)
@@ -32,4 +50,8 @@ def preprocessing(country):
     y_train=y[0:int(n-15)]
     y_test=y[int(n-10):]
 
+<<<<<<< HEAD
     return X_test,y_test,X_train,y_train,df
+=======
+    return X_test,y_test,X_train,y_train,df, y
+>>>>>>> 566283f1dd5f6988078d830c92d1e18b82aa5340
