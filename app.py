@@ -1,7 +1,8 @@
 import os
+import pandas as pd
 import streamlit as st
-from covid_time_series_prediction import predict
-
+from covid_time_series_prediction.prediction import predict
+from covid_time_series_prediction.ml_logic.sumedha_preprocessing import preprocessing
 
 
 
@@ -35,7 +36,7 @@ st.markdown(
 
 option=st.selectbox('PLEASE SELECT YOUR COUNTRY',
 
-('BRAZIL', 'FRANCE', 'INDIA', 'MEXICO', 'UNITED KINGDOM'))
+('Brazil', 'France', 'India', 'Mexico', 'United Kingdom'))
 
 
 st.write('YOU SELECTED:', option)
@@ -54,19 +55,18 @@ country_list=['Brazil','France', 'India', 'Mexico', 'United Kingdom']
 countries=[]
 
 
-path_begin='/root/code/bkyan69/Teki-Teka/covid_time_series_prediction/data/out_csv'
+path_begin='/root/code/bktan69/Teki-Teka/covid_time_series_prediction/data/out_csv'
 
-csv_name = f'index_{option}.csv'
-csv_path = os.path.join(path_begin, csv_name)
-X_test, data, y, = sumedha_function((csv_path))
+# csv_name = f'index_{option}.csv'
+# csv_path = os.path.join(path_begin, csv_name)
+
+X_test,y_test,X_train,y_train,df,y= preprocessing(option)
 date_prediction=['2022/09/01', '2022/09/02', '2022/09/03', '2022/09/04', '2022/09/05'
 '2022/09/06', '2022/09/07', '2022/09/08', '2022/09/09', '2022/09/10']
 
+list_pred,X_predict=predict(X_test=X_test, country=option.capitalize(), data=df, y=y)
 
-
-list_pred,X_predict=predict(X_test=?, country=option.capitalize(), data= ?, y=? )
-
-st.line_chart(data=[y_test, list_pred] *, x=None, y=None, width=0, height=0, use_container_width=True)
+st.line_chart(data=[y_test, list_pred], x=date_prediction)
 
 
 
