@@ -9,13 +9,13 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def scale_country(country):
-    
-    path = "../covid_time_series_prediction/data/data_raw"
-    
+
+    path = "../covid_time_series_prediction/data/out_csv"
+
     csv_path = os.path.join(path, f"data_{country}")
-    
+
     country_indicator = pd.read_csv(csv_path)
-    
+
     X = country_indicator.drop(columns = ['date','new_cases', 'new_deaths', 'total_deaths'])
 
     y = country_indicator['total_deaths']
@@ -29,9 +29,9 @@ def scale_country(country):
 
 
 def train_test_set(country, split_train=0.8, split_val=0):
-    
+
     X, y = scale_country(country)
-    
+
     train = int((len(X)*split_train))
     val = int(len(X)*split_val)
 
