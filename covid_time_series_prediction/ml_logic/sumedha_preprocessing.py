@@ -5,7 +5,12 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def preprocessing(country):
     
-    path = f'../../covid_time_series_prediction/data/out_csv/index_{country}.csv'
+   #path = f'../../covid_time_series_prediction/data/out_csv/index_{country}.csv'
+    
+    #countries=[]
+    #path='data/out_csv'
+    #for country in country_list:
+    path=f'../data/out_csv/index_{country}.csv'
     df=pd.read_csv(path)
     
     df=df.set_index('date')
