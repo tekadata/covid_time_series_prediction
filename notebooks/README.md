@@ -1,5 +1,6 @@
 # Notebooks documentation
 
+## Useful notebooks:
  - **visualization_alb.ipynb** 
     - Visualization for Germany country of:
         - Indexes, 
@@ -16,3 +17,24 @@
     - Deep Learning Time Series COVID-19 Prediction:
         - Indexes of France from '../data/out_csv/index_France.csv' and
         - prediction of 15 days of total deaths from 2022-08-28 to 2022-09-11.
+        
+ - **model-France-pickle-prediction.ipynb**
+    - Deep Learning Time Series COVID-19 Prediction:
+        - Indexes of France from '../data/out_csv/index_France.csv' and
+        - prediction of 10 days of total deaths from 2022-07-14 to 2022-09-23.
+        
+ - **model-India-SVR-index-.ipynb**
+    - Deep Learning Time Series COVID-19 Prediction:
+        - Indexes of France from '../data/out_csv/index_India.csv' and
+        - prediction of 15 days of total deaths from 2022-08-28 to 2022-09-11. 
+
+- **model-France-SVR-index-.ipynb**
+    - Deep Learning Time Series COVID-19 Prediction:
+        - Indexes of France from '../data/out_csv/index_India.csv' and
+        - ?
+
+## Old works notebooks:
+- **model-France-SVR-index-.ipynb**
+    - RNN_TeKa:
+        - Indexes of France from '../data/out_csv/index_India.csv' and
+        - ?
