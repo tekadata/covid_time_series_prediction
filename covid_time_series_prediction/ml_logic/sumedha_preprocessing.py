@@ -11,8 +11,8 @@ def preprocessing(country):
     ####### find the reltive path
 
 
-    past_test = '../data/out_csv/index_{country}.csv'
-
+    past_test = f'data/out_csv/index_{country}.csv'
+    print('past_test', past_test)
 #covid_time_series_prediction/data/out_csv/index_Brazil.csv
 #covid_time_series_prediction/covid_time_series_prediction/ml_logic
     # path_begin='/root/code/bktan69/Teki-Teka/covid_time_series_prediction/data/out_csv'

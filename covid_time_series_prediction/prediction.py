@@ -4,7 +4,7 @@ import numpy as np
 
 def predict(X_test,country,data,y):
     y_train=y[(len(y)-15):0]
-    path='/data/models'
+    path='covid_time_series_prediction/data/models'
     model=pickle.load(open(f'{path}/model_{country}.pkl','rb'))
     X_test_columns=data.drop(columns=['total_deaths','new_cases','new_deaths'])
     X_test_columns.columns
