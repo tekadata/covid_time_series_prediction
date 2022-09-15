@@ -4,7 +4,7 @@ import streamlit as st
 from covid_time_series_prediction.prediction import predict
 from covid_time_series_prediction.ml_logic.sumedha_preprocessing import preprocessing
 
-
+st.write("Hello ,let's learn how to build a streamlit app together")
 
 primaryColor="#F63366"
 backgroundColor="#FFFFFF"

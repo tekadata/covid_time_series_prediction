@@ -1,10 +1,12 @@
 import pickle
 import pandas as pd
 import numpy as np
+from covid_time_series_prediction.ml_logic.sumedha_prep import preprocessing
 
 def predict(X_test,country,data,y):
-    y_train=y[(len(y)-15):0]
-    path='covid_time_series_prediction/data/models'
+    X_test,y_test,X_train,y_train,df,y=preprocessing(country)
+    #y_train=y[(len(y)-15):0]
+    path='/home/sumedha/code/covid_time_series_prediction/covid_time_series_prediction/data/models'
     model=pickle.load(open(f'{path}/model_{country}.pkl','rb'))
     X_test_columns=data.drop(columns=['total_deaths','new_cases','new_deaths'])
     X_test_columns.columns
@@ -16,11 +18,13 @@ def predict(X_test,country,data,y):
     min_num=min(y)
     max_num=max(y)
     list_pred=[]
+    y_val=y_train.tail(1).values[0]
+
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[0]).T))
-    if (y_pred_ < y_train.tail(1).tolist())[0]:
-        y_pred_=y_train.tail(1)
-        y_pred_2=y_train.tail(1)
+    if y_pred_ < y_val:
+        y_pred_=y_val
+        y_pred_2=y_val
     else:
         y_pred_2=y_pred_
 
@@ -122,4 +126,5 @@ def predict(X_test,country,data,y):
     else:
         y_pred_2=y_pred_
     list_pred.append(y_pred_)
+    list_pred=pd.DataFrame(list_pred)
     return list_pred,X_predict
