@@ -22,7 +22,7 @@ pip install --upgrade pip; pip install -r requirements.txt
 pip freeze
 ```
 
-Unittest test:
+Unit test:
 ```bash
 make clean install test
 ```
