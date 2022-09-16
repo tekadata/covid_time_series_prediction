@@ -35,16 +35,16 @@ def predict(X_test,country,data,y):
 
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
-   
+
     for j in range(1,11):
-        X_predict.loc[j,f'day-{j}']=y_pred_scale[0]
+        X_predict.loc[j,f'day-{j}']=y_pred_scale
 
     y_pred_ = np.round(model.predict(pd.DataFrame(X_predict.loc[1]).T))
 
-    if y_pred_[0] < y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+    if y_pred_ < y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
 
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
@@ -52,22 +52,22 @@ def predict(X_test,country,data,y):
         X_predict.loc[j,f'day-{j-1}']=y_pred_scale
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[2]).T))
-    
-    if y_pred_[0] < y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+
+    if y_pred_[0] < y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
     for j in range(3,11):
         X_predict.loc[j,f'day-{j-2}']=y_pred_scale
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[3]).T))
-    
-    if y_pred_[0]< y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+
+    if y_pred_< y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
     for j in range(4,11):
@@ -75,19 +75,19 @@ def predict(X_test,country,data,y):
 
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[4]).T))
-    if y_pred_[0]< y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+    if y_pred_< y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
     for j in range(5,11):
         X_predict.loc[j,f'day-{j-4}']=y_pred_scale
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[5]).T))
-    if y_pred_[0]< y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+    if y_pred_< y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
     for j in range(6,11):
@@ -95,20 +95,20 @@ def predict(X_test,country,data,y):
 
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[6]).T))
-    if y_pred_[0]< y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+    if y_pred_< y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
 
     for j in range(7,11):
         X_predict.loc[j,f'day-{j-6}']=y_pred_scale
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[7]).T))
-    if y_pred_[0]< y_pred_2[0]:
-        y_pred_=y_pred_2[0]
+    if y_pred_< y_pred_2:
+        y_pred_=y_pred_2
     else:
-        y_pred_2=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
 
@@ -117,13 +117,13 @@ def predict(X_test,country,data,y):
 
 
     y_pred_=np.round(model.predict(pd.DataFrame(X_predict.loc[8]).T))
-    if y_pred_[0]< y_pred_2[0]:
+    if y_pred_< y_pred_2:
         y_pred_=y_pred_2
     else:
-        y_pred_2[0]=y_pred_[0]
+        y_pred_2=y_pred_
     y_pred_scale=((y_pred_)-min_num) / ((max_num)-(min_num))
     list_pred.append(y_pred_)
-    
+
     #for j in range(9,11):
     #    X_predict.loc[j,f'day-{j-8}']=y_pred_scale
 
